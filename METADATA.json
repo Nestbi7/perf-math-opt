@@ -1,0 +1,19 @@
+{
+  "topic": "Vectorization / Algorithmic optimization",
+  "difficulty": "Medium",
+  "evaluation": {
+    "unit_tests": "pytest -q",
+    "reproduction": "python repro.py"
+  },
+  "target_functions": [
+    "perfmath.kernels.pairwise_sqeuclidean",
+    "perfmath.kernels.sum_pairwise_sqeuclidean",
+    "perfmath.stats.covariance_matrix",
+    "perfmath.objectives.kmeans_inertia",
+    "perfmath.objectives.graph_energy"
+  ],
+  "notes": {
+    "prompt_does_not_list_targets": true,
+    "outputs_must_match_exactly": true
+  }
+}
