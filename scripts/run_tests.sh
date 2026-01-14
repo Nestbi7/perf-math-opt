@@ -5,7 +5,7 @@ cd "$(dirname "$0")/.."
 
 rm -f .pytest_report.json
 
-pytest -q --json-report --json-report-file=.pytest_report.json
+pytest -q --json-report --json-report-file=.pytest_report.json >/dev/null
 
 python - <<'PY'
 import json
