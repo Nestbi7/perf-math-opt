@@ -1,5 +1,3 @@
-mkdir -p scripts
-cat > scripts/run_tests.sh <<'SH'
 #!/usr/bin/env bash
 set -euo pipefail
 
@@ -31,6 +29,3 @@ for t in report.get("tests", []):
 
 print(json.dumps({"tests": tests}, indent=2))
 PY
-SH
-
-chmod +x scripts/run_tests.sh
