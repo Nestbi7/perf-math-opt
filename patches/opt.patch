@@ -1,0 +1,25 @@
+From 5a1dcb596d64eccd88ac7e300fee4a7f106d623a Mon Sep 17 00:00:00 2001
+From: Nestor Hugo Biedma <nestorhugobiedma@MacBook-Pro-de-Nestor.local>
+Date: Wed, 14 Jan 2026 18:50:00 -0300
+Subject: [PATCH] Make test runner output JSON only
+
+---
+ scripts/run_tests.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/scripts/run_tests.sh b/scripts/run_tests.sh
+index c09a3a5..c23e9a5 100755
+--- a/scripts/run_tests.sh
++++ b/scripts/run_tests.sh
+@@ -5,7 +5,7 @@ cd "$(dirname "$0")/.."
+ 
+ rm -f .pytest_report.json
+ 
+-pytest -q --json-report --json-report-file=.pytest_report.json
++pytest -q --json-report --json-report-file=.pytest_report.json >/dev/null
+ 
+ python - <<'PY'
+ import json
+-- 
+2.51.2
+
