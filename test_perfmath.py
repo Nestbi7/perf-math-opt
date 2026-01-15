@@ -87,3 +87,17 @@ def test_sum_pairwise_identity_matches_brute_close_but_not_bitexact():
     s_brute = brute_sum_pairwise_sqeuclidean(X)
     s_fast = fast_sum_pairwise_sqeuclidean_identity(X)
     assert np.isclose(s_fast, s_brute, rtol=1e-12, atol=1e-9)
+
+def test_pairwise_sqeuclidean_has_zero_diag_and_nonnegative():
+    rng = np.random.default_rng(0)
+    X = rng.standard_normal((256, 64)).astype(np.float64)
+    D = pm.pairwise_sqeuclidean(X)
+    assert np.all(np.diag(D) == 0.0)
+    assert float(np.min(D)) >= 0.0
+
+
+def test_pairwise_sqeuclidean_is_exactly_symmetric():
+    rng = np.random.default_rng(1)
+    X = rng.standard_normal((200, 32)).astype(np.float64)
+    D = pm.pairwise_sqeuclidean(X)
+    assert np.array_equal(D, D.T)
