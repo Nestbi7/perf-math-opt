@@ -72,3 +72,18 @@ def test_graph_energy_is_finite():
     X = rng.normal(size=(80, 3)).astype(np.float64)
     E = pm.graph_energy(X, gamma=0.2)
     assert np.isfinite(E)
+
+def fast_sum_pairwise_sqeuclidean_identity(X: np.ndarray) -> float:
+    X = np.asarray(X, dtype=np.float64)
+    n = X.shape[0]
+    s_norms = float(np.sum(X * X))               
+    s_vec = np.sum(X, axis=0)                   
+    return float(n * s_norms - float(s_vec @ s_vec))
+
+
+def test_sum_pairwise_identity_matches_brute_close_but_not_bitexact():
+    rng = np.random.default_rng(123)
+    X = rng.normal(size=(200, 12)).astype(np.float64)
+    s_brute = brute_sum_pairwise_sqeuclidean(X)
+    s_fast = fast_sum_pairwise_sqeuclidean_identity(X)
+    assert np.isclose(s_fast, s_brute, rtol=1e-12, atol=1e-9)
