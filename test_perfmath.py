@@ -101,3 +101,15 @@ def test_pairwise_sqeuclidean_is_exactly_symmetric():
     X = rng.standard_normal((200, 32)).astype(np.float64)
     D = pm.pairwise_sqeuclidean(X)
     assert np.array_equal(D, D.T)
+    
+def test_sum_pairwise_sqeuclidean_adversarial_requires_dot_bitexact():
+    rng = np.random.default_rng(0)
+    n, d = 32, 1063
+    X = (
+        rng.standard_normal((n, d)) * 1e100
+        + rng.standard_normal((n, d)) * 1e-100
+    ).astype(np.float64)
+    expected = brute_sum_pairwise_sqeuclidean(X)   # uses (diff @ diff) per pair
+    got = pm.sum_pairwise_sqeuclidean(X)
+    assert np.isfinite(expected)
+    assert got == expected
