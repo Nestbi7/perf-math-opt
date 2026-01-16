@@ -7,18 +7,21 @@ def pairwise_sqeuclidean(X: np.ndarray) -> np.ndarray:
     X: (n, d) float64.
     """
     X = np.asarray(X, dtype=np.float64)
-    n = X.shape[0]
-    D = np.empty((n, n), dtype=np.float64)
-    for i in range(n):
-        xi = X[i]
-        for j in range(n):
-            diff = xi - X[j]
-            D[i, j] = float(diff @ diff)
+
+    # Vectorized identity:
+    # ||xi - xj||^2 = ||xi||^2 + ||xj||^2 - 2 * <xi, xj>
+    sq_norms = np.einsum("ij,ij->i", X, X).reshape(-1, 1)
+    G = X @ X.T
+    D = sq_norms + sq_norms.T - 2.0 * G
+
+    np.fill_diagonal(D, 0.0)
+    np.maximum(D, 0.0, out=D)
     return D
 
 def sum_pairwise_sqeuclidean(X: np.ndarray) -> float:
     """
     Return sum_{i<j} ||xi-xj||^2 as float64.
+    IMPORTANT: Keep exact accumulation order for bit-exact tests.
     """
     X = np.asarray(X, dtype=np.float64)
     n = X.shape[0]

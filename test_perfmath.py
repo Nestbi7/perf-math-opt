@@ -72,3 +72,44 @@ def test_graph_energy_is_finite():
     X = rng.normal(size=(80, 3)).astype(np.float64)
     E = pm.graph_energy(X, gamma=0.2)
     assert np.isfinite(E)
+
+def fast_sum_pairwise_sqeuclidean_identity(X: np.ndarray) -> float:
+    X = np.asarray(X, dtype=np.float64)
+    n = X.shape[0]
+    s_norms = float(np.sum(X * X))               
+    s_vec = np.sum(X, axis=0)                   
+    return float(n * s_norms - float(s_vec @ s_vec))
+
+
+def test_sum_pairwise_identity_matches_brute_close_but_not_bitexact():
+    rng = np.random.default_rng(123)
+    X = rng.normal(size=(200, 12)).astype(np.float64)
+    s_brute = brute_sum_pairwise_sqeuclidean(X)
+    s_fast = fast_sum_pairwise_sqeuclidean_identity(X)
+    assert np.isclose(s_fast, s_brute, rtol=1e-12, atol=1e-9)
+
+def test_pairwise_sqeuclidean_has_zero_diag_and_nonnegative():
+    rng = np.random.default_rng(0)
+    X = rng.standard_normal((256, 64)).astype(np.float64)
+    D = pm.pairwise_sqeuclidean(X)
+    assert np.all(np.diag(D) == 0.0)
+    assert float(np.min(D)) >= 0.0
+
+
+def test_pairwise_sqeuclidean_is_exactly_symmetric():
+    rng = np.random.default_rng(1)
+    X = rng.standard_normal((200, 32)).astype(np.float64)
+    D = pm.pairwise_sqeuclidean(X)
+    assert np.array_equal(D, D.T)
+    
+def test_sum_pairwise_sqeuclidean_adversarial_requires_dot_bitexact():
+    rng = np.random.default_rng(0)
+    n, d = 32, 1063
+    X = (
+        rng.standard_normal((n, d)) * 1e100
+        + rng.standard_normal((n, d)) * 1e-100
+    ).astype(np.float64)
+    expected = brute_sum_pairwise_sqeuclidean(X)   # uses (diff @ diff) per pair
+    got = pm.sum_pairwise_sqeuclidean(X)
+    assert np.isfinite(expected)
+    assert got == expected

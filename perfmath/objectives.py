@@ -6,6 +6,7 @@ def kmeans_inertia(X: np.ndarray, labels: np.ndarray, centers: np.ndarray) -> fl
     """
     Sum of squared distances to assigned center.
     Baseline uses Python loop.
+    IMPORTANT: Keep exact accumulation order for bit-exact tests.
     """
     X = np.asarray(X, dtype=np.float64)
     labels = np.asarray(labels, dtype=np.int64)
@@ -21,13 +22,7 @@ def graph_energy(X: np.ndarray, gamma: float) -> float:
     """
     A simple "energy" based on a fully-connected RBF similarity graph:
       E = sum_{i<j} exp(-gamma * ||xi-xj||^2)
-    Baseline: compute full pairwise matrix first.
     """
     D = pairwise_sqeuclidean(X)
     K = np.exp(-gamma * D, dtype=np.float64)
-    n = K.shape[0]
-    s = 0.0
-    for i in range(n):
-        for j in range(i + 1, n):
-            s += float(K[i, j])
-    return float(s)
+    return float(np.triu(K, k=1).sum())
