@@ -1,19 +1,21 @@
 {
-  "topic": "Vectorization / Algorithmic optimization",
-  "difficulty": "Medium",
+  "topic": "Vectorization / Numerical determinism (bit-exact optimization)",
+  "difficulty": "Hard",
   "evaluation": {
-    "unit_tests": "pytest -q",
+    "unit_tests": "./scripts/run_tests.sh",
     "reproduction": "python repro.py"
   },
   "target_functions": [
-    "perfmath.kernels.pairwise_sqeuclidean",
     "perfmath.kernels.sum_pairwise_sqeuclidean",
-    "perfmath.stats.covariance_matrix",
+    "perfmath.kernels.pairwise_sqeuclidean",
     "perfmath.objectives.kmeans_inertia",
-    "perfmath.objectives.graph_energy"
+    "perfmath.objectives.graph_energy",
+    "perfmath.stats.covariance_matrix"
   ],
   "notes": {
     "prompt_does_not_list_targets": true,
-    "outputs_must_match_exactly": true
+    "outputs_must_match_exactly": true,
+    "requires_bit_exact_floating_point": true,
+    "vectorization_can_break_dot_product_reduction_order": true
   }
 }
